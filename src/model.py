@@ -1,25 +1,33 @@
-import os
-os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"  # Desactiva el mensaje de oneDNN
 
+import tensorflow as tf
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Input
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.optimizers import Adam
+
+from tensorflow.keras.regularizers import l2
+
+
 
 def build_model(input_shape):
-    """Construye un modelo de red neuronal."""
+    """Define una red neuronal para la predicción del precio de alquiler."""
+    
     model = Sequential([
-        Input(shape=input_shape),
-        Dense(64, activation='relu'),
-        Dense(32, activation='relu'),
-        Dense(1)  # Capa de salida para regresión
+    Dense(512, activation='relu', kernel_initializer='he_normal', input_shape=(input_shape,)),
+    Dropout(0.3),
+    Dense(256, activation='relu', kernel_regularizer=l2(0.01)),
+    Dropout(0.3),
+    Dense(128, activation='relu', kernel_regularizer=l2(0.01)),
+    Dropout(0.3),
+    Dense(64, activation='relu', kernel_regularizer=l2(0.01)),
+    Dropout(0.3),
+    Dense(32, activation='relu', kernel_regularizer=l2(0.01)),
+    Dense(1, activation='linear')
     ])
-    
-    # Compilación del modelo
-    model.compile(optimizer='adam', loss='mse', metrics=['mae'])
-    
+
+    model.compile(optimizer=Adam(learning_rate=0.001), loss='mse', metrics=['mae'])
     return model
 
-# 📌 Prueba del modelo (solo si se ejecuta el script directamente)
 if __name__ == "__main__":
-    input_shape = (10,)  # Ajusta el número de características según tu dataset
-    model = build_model(input_shape)
-    model.summary()  # Muestra la arquitectura del modelo
+    input_dim = 20  # Ajustar según el número de características
+    model = build_model(input_dim)
+    model.summary()

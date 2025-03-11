@@ -1,32 +1,44 @@
 import pandas as pd
-from sklearn.model_selection import train_test_split
+import numpy as np
+from sklearn.preprocessing import StandardScaler
 
-def load_data(filepath, test_size=0.2, random_state=42):
-    """Carga el dataset, preprocesa variables categóricas y lo divide en entrenamiento y prueba."""
-    df = pd.read_csv(filepath)
-    df.dropna(inplace=True)  # Eliminar filas con valores nulos
+def load_and_preprocess_data(file_path):
+    """Carga el dataset, maneja valores nulos, codifica variables categóricas y normaliza los datos."""
+    
+    # Cargar el dataset
+    try:
+        data = pd.read_csv(file_path)
+        print("✅ Dataset cargado correctamente.")
+    except FileNotFoundError:
+        print("❌ Error: No se encontró el archivo en la ruta especificada.")
+        return None
+    
+    # Eliminar valores nulos
+    data.dropna(inplace=True)
+    
+    # Eliminar la columna 'Posted On' si existe
+    if 'Posted On' in data.columns:
+        data.drop(columns=['Posted On'], inplace=True)
+    
+    # Aplicar logaritmo a Rent para normalizar su distribución
+    data['Rent'] = np.log1p(data['Rent'])
 
-    # 🔹 Convertir fechas a formato numérico (timestamp UNIX en segundos)
-    df['Posted On'] = pd.to_datetime(df['Posted On']).view('int64') // 10**9
+    # Eliminar valores atípicos (percentil 2% y 98%)
+    lower_bound = data['Rent'].quantile(0.02)
+    upper_bound = data['Rent'].quantile(0.98)
+    data = data[(data['Rent'] > lower_bound) & (data['Rent'] < upper_bound)]
 
-    # 🔹 Eliminar columnas irrelevantes
-    df.drop(columns=['Point of Contact', 'Area Locality'], inplace=True)
+    # Codificación de variables categóricas
+    data = pd.get_dummies(data, drop_first=True)
+    
+    # Normalización de los datos
+    scaler = StandardScaler()
+    data_scaled = pd.DataFrame(scaler.fit_transform(data), columns=data.columns)
 
-    # 🔹 Convertir variables categóricas en variables numéricas
-    df = pd.get_dummies(df, columns=['Floor', 'Area Type', 'City', 'Furnishing Status', 'Tenant Preferred'], drop_first=True)
+    print(f"✅ Preprocesamiento completado. Dimensiones finales: {data_scaled.shape}")
+    return data_scaled
 
-    # 🔹 Separar variables predictoras (X) y objetivo (y)
-    X = df.drop(columns=['Rent'])
-    y = df['Rent']
-
-    # 🔹 Dividir en entrenamiento y prueba
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
-
-    return X_train, X_test, y_train, y_test
-
-# 📌 Prueba rápida
 if __name__ == "__main__":
-    filepath = r"C:\Users\herny\Documents\2025_SEM_III\DEEP LEARNING\Archivos_proyecto_ml_\House_Rent_Dataset.csv"
-    X_train, X_test, y_train, y_test = load_data(filepath)
-
-    print("✅ Datos
+    file_path = "C:/Users/herny/Documents/2025_SEM_III/DEEP LEARNING/mi_proyecto_ml/src/House_Rent_Dataset.csv"
+    df = load_and_preprocess_data(file_path)
+    print(df.head())
