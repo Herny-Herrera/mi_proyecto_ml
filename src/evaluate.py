@@ -24,9 +24,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # Intentar cargar el modelo especificando 'mse' en custom_objects
 try:
     model = tf.keras.models.load_model(model_path, custom_objects={"mse": tf.keras.losses.MeanSquaredError()})
-    print(f"✅ Modelo cargado correctamente desde {model_path}")
+    print(f" Modelo cargado correctamente desde {model_path}")
 except Exception as e:
-    print(f"❌ Error al cargar el modelo: {e}")
+    print(f" Error al cargar el modelo: {e}")
     exit()
 
 # Evaluar el modelo

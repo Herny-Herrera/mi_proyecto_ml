@@ -20,13 +20,26 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 input_dim = X_train.shape[1]
 model = build_model(input_dim)
 
+from tensorflow.keras.callbacks import EarlyStopping
+early_stopping = EarlyStopping(monitor='val_loss', patience=25, restore_best_weights=True)
+
+from tensorflow.keras.callbacks import ReduceLROnPlateau
+reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=10, min_lr=0.00001, verbose=1)
+
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler()
+y_train_scaled = scaler.fit_transform(y_train.reshape(-1, 1))
+y_test_scaled = scaler.transform(y_test.reshape(-1, 1))
+
 # Entrenar modelo
 history = model.fit(
-    X_train, y_train,
-    validation_data=(X_test, y_test),
+    X_train, y_train_scaled,
+    validation_data=(X_test, y_test_scaled),
     epochs=100,
-    batch_size=32,
-    verbose=1
+    batch_size=256,
+    verbose=1,
+     callbacks=[early_stopping,reduce_lr] 
 )
 
 # Guardar modelo entrenado

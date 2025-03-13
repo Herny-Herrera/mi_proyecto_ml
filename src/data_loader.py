@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 
 def load_and_preprocess_data(file_path):
     """Carga el dataset, maneja valores nulos, codifica variables categóricas y normaliza los datos."""
@@ -13,7 +13,13 @@ def load_and_preprocess_data(file_path):
         print("❌ Error: No se encontró el archivo en la ruta especificada.")
         return None
     
-    # Eliminar valores nulos
+    # Información general del dataset
+    print(data.info())
+    
+    # Estadísticas descriptivas
+    print(data.describe())
+    
+    # Manejo de valores nulos
     data.dropna(inplace=True)
     
     # Eliminar la columna 'Posted On' si existe
@@ -22,14 +28,22 @@ def load_and_preprocess_data(file_path):
     
     # Aplicar logaritmo a Rent para normalizar su distribución
     data['Rent'] = np.log1p(data['Rent'])
+    #import numpy as np
+
+    #data['Rent'] = np.sqrt(data['Rent'])  # Aplica raíz cuadrada
+
 
     # Eliminar valores atípicos (percentil 2% y 98%)
     lower_bound = data['Rent'].quantile(0.02)
     upper_bound = data['Rent'].quantile(0.98)
     data = data[(data['Rent'] > lower_bound) & (data['Rent'] < upper_bound)]
 
-    # Codificación de variables categóricas
-    data = pd.get_dummies(data, drop_first=True)
+    # Identificar columnas categóricas y aplicar Label Encoding
+    categorical_cols = data.select_dtypes(include=['object']).columns
+    encoder = LabelEncoder()
+    for col in categorical_cols:
+        data[col] = encoder.fit_transform(data[col])
+    print("✅ Variables categóricas transformadas con Label Encoding.")
     
     # Normalización de los datos
     scaler = StandardScaler()
