@@ -2,9 +2,13 @@
 
 ## Integrantes
 >> Sebastián Heredia
->> Alejandra Bolívar 
+>> 
+>> Alejandra Bolívar
+>> 
 >> Michael Gualteros
+>> 
 >> Herny Herrera
+>> 
 >> Juan Rodriguez
 
 ## Descripción del Proyecto
