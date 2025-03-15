@@ -6,7 +6,7 @@ from model import build_model
 from data_loader import load_data
 
 #  Ruta del archivo de datos
-data_path = r"C:\Users\herny\Documents\2025_SEM_III\DEEP LEARNING\Archivos_proyecto_ml_\House_Rent_Dataset.csv"
+data_path = r"C:\\Users\\USER\\OneDrive\\Escritorio\\Maestría\\mi_proyecto_ml\\src\\House_Rent_Dataset.csv"
 
 #  Cargar datos
 X_train, X_test, y_train, y_test = load_data(data_path)

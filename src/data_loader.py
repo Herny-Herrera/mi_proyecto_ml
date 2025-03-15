@@ -14,6 +14,7 @@ def load_and_preprocess_data(file_path):
         return None
     
     # Eliminar valores nulos
+    data_original = data 
     data.dropna(inplace=True)
     
     # Eliminar la columna 'Posted On' si existe
@@ -29,16 +30,20 @@ def load_and_preprocess_data(file_path):
     data = data[(data['Rent'] > lower_bound) & (data['Rent'] < upper_bound)]
 
     # Codificación de variables categóricas
-    data = pd.get_dummies(data, drop_first=True)
-    
+        
+    from sklearn.preprocessing import LabelEncoder
+    categorical_cols = data.select_dtypes(include=['object']).columns
+    encoder = LabelEncoder()
+    for col in categorical_cols:
+        data[col] = encoder.fit_transform(data[col])
+        
     # Normalización de los datos
     scaler = StandardScaler()
     data_scaled = pd.DataFrame(scaler.fit_transform(data), columns=data.columns)
 
     print(f"✅ Preprocesamiento completado. Dimensiones finales: {data_scaled.shape}")
-    return data_scaled
+    return data, data_scaled,data_original
 
 if __name__ == "__main__":
-    file_path = "C:/Users/herny/Documents/2025_SEM_III/DEEP LEARNING/mi_proyecto_ml/src/House_Rent_Dataset.csv"
-    df = load_and_preprocess_data(file_path)
+    df = load_and_preprocess_data()
     print(df.head())

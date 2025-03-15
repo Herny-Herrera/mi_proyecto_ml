@@ -5,8 +5,9 @@ from data_loader import load_and_preprocess_data
 from model import build_model
 
 # Cargar datos
-file_path = "C:/Users/herny/Documents/2025_SEM_III/DEEP LEARNING/mi_proyecto_ml/src/House_Rent_Dataset.csv"
-df = load_and_preprocess_data(file_path)
+file_path = "C:\\Users\\USER\\OneDrive\\Escritorio\\Maestría\\mi_proyecto_ml\\src\\House_Rent_Dataset.csv"
+
+_, df = load_and_preprocess_data(file_path)
 
 # Separar características (X) y variable objetivo (y)
 X = df.drop(columns=["Rent"]).values
