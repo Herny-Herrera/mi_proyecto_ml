@@ -1,5 +1,12 @@
 # Predicción del Precio de Alquiler de Viviendas con una Red Neuronal
 
+## Integrantes
+>> Sebastián Heredia
+>> Alejandra Bolívar 
+>> Michael Gualteros
+>> Herny Herrera
+>> Juan Rodriguez
+
 ## Descripción del Proyecto
 Este proyecto implementa una red neuronal utilizando Backpropagation para predecir el precio de alquiler de viviendas en una ciudad, basado en un conjunto de datos con información sobre propiedades residenciales.
 
