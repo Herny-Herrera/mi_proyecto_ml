@@ -12,7 +12,7 @@ def build_model(input_shape):
     
  
     model = Sequential([
-    Dense(512, activation='relu', kernel_regularizer=l2(0.01), input_shape=(input_shape,)),
+    Dense(512, activation='relu', kernel_regularizer=l2(0.01), input_shape=(10,)),
     Dropout(0.3),
     Dense(256, activation='relu', kernel_regularizer=l2(0.01)),
     Dropout(0.3),
