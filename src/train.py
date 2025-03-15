@@ -1,74 +1,35 @@
-
-import os
-import matplotlib.pyplot as plt
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
+import numpy as np
+import tensorflow as tf
+from sklearn.model_selection import train_test_split
+from data_loader import load_and_preprocess_data
 from model import build_model
-from data_loader import load_data
 
-#  Ruta del archivo de datos
-data_path = r'C:\Users\herny\Documents\2025_SEM_III\DEEP LEARNING\Archivos_proyecto_ml_\House_Rent_Dataset.csv'
+# Cargar datos
+file_path = "C:\\Users\\USER\\OneDrive\\Escritorio\\Maestría\\mi_proyecto_ml\\src\\House_Rent_Dataset.csv"
 
-#  Cargar datos
-X_train, X_test, y_train, y_test = load_data(data_path)
+_, df = load_and_preprocess_data(file_path)
 
-print(X_train.dtypes)  # Verifica los tipos de cada columna
-print(X_train.head())  # Muestra algunas filas de los datos
+# Separar características (X) y variable objetivo (y)
+X = df.drop(columns=["Rent"]).values
+y = df["Rent"].values
 
-#  Crear el modelo
-input_shape = (X_train.shape[1],)  # Asegurando que sea una tupla válida
-model = build_model(input_shape)
+# Dividir en entrenamiento y prueba (80%-20%)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+# Crear modelo
+input_dim = X_train.shape[1]
+model = build_model(input_dim)
 
-
-#  Definir directorio para guardar modelos
-model_dir = "models/"
-os.makedirs(model_dir, exist_ok=True)
-model_path = os.path.join(model_dir, "best_model.h5")
-
-
-
-# Callbacks para guardado y early stopping
-checkpoint = ModelCheckpoint(model_path, save_best_only=True, monitor='val_loss', mode='min')
-early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
-
-#  Entrenar el modelo
+# Entrenar modelo
 history = model.fit(
-    X_train, y_train, validation_data=(X_test, y_test),
-    epochs=50, batch_size=32,
-    callbacks=[checkpoint, early_stopping]
+    X_train, y_train,
+    validation_data=(X_test, y_test),
+    epochs=100,
+    batch_size=32,
+    verbose=1
 )
 
-#  Guardar el modelo final
-final_model_path = os.path.join(model_dir, "final_model.h5")
-model.save(final_model_path)
-print(f"Modelo guardado en {final_model_path}")
+# Guardar modelo entrenado
+model.save("C:/Users/herny/Documents/2025_SEM_III/DEEP LEARNING/mi_proyecto_ml/models/model_v2.h5")
 
-
-
-
-#  Función para graficar la historia del entrenamiento
-def plot_training_history(history):
-    plt.figure(figsize=(12, 4))
-
-    # 🔹 Pérdida (Loss)
-    plt.subplot(1, 2, 1)
-    plt.plot(history.history.get('loss', []), label='Loss (train)')
-    plt.plot(history.history.get('val_loss', []), label='Loss (validation)')
-    plt.xlabel('Epochs')
-    plt.ylabel('Loss (MSE)')
-    plt.title('Evolución de la Pérdida')
-    plt.legend()
-
-    # 🔹 MAE (Error Absoluto Medio)
-    plt.subplot(1, 2, 2)
-    plt.plot(history.history.get('mae', []), label='MAE (train)')
-    plt.plot(history.history.get('val_mae', []), label='MAE (validation)')
-    plt.xlabel('Epochs')
-    plt.ylabel('Mean Absolute Error')
-    plt.title('Evolución del MAE')
-    plt.legend()
-
-    plt.show()
-
-#  Llamar a la función después de entrenar
-plot_training_history(history)
+print("✅ Entrenamiento finalizado. Modelo guardado.")
