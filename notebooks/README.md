@@ -1,8 +1,7 @@
 1) Requisitos Previos y Dependencias
 
 Antes de ejecutar cualquier script, asegúrate de tener instaladas las librerías del archivo requirements.txt
-michael david gualteros garcia
-23:47
+
 2) Cómo Entrenar el Modelo (train.py)
 
 El script train.py entrena el modelo con los datos de entrenamiento y guarda los pesos entrenados.
@@ -43,3 +42,8 @@ Carga el modelo guardado (model_v2.h5).
 Preprocesa los nuevos datos de entrada.
 Realiza la predicción de la renta esperada.
 Guarda o muestra los resultados de la predicción
+
+
+Para el caso de los notebooks se deben ejecutar de acuerdo al nombre establecido, es decir primero el "01_exploracion.ipynb", luego el "02_entrenamiento.ipynb" y "finalmente 03_evaluacion.ipynb"
+
+Tener en cuenta que los 3 notebooks se deben ejecutar sobre el mismo entorno de ejecución
